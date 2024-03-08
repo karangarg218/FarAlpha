@@ -18,8 +18,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/azureuser/finalApp
-            git checkout -- *
+            git remote add origin https://github.com/karangarg218/FarAlpha.git
+            git fetch origin
             git checkout master
-            git pull origin master
-
+            git pull origin maste
             sudo env PATH=$PATH:/home/azureuser/.nvm/versions/node/v20.11.1/bin npx pm2 restart app.js
