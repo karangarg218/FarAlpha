@@ -1,34 +1,14 @@
-name: Deploy to Virtual Machine
-
-on:
-  push:
-    branches:
-      - master
-
+name: Access server
+on: push
 jobs:
-  deploy:
+  access_server:
+    name: Access server
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: npm install # Assuming your project uses npm for dependency management
-
-      - name: Deploy code to virtual machine
-        # Replace the following command with the deployment command for your specific setup
-        run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }} "echo 'Deployment successful!'"
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
-          AZURE_HOST: ${{ secrets.AZURE_HOST }}
-
-      - name: Notify on success
-        if: success()
-        run: echo "Deployment successful. Notification sent."
-
-      - name: Notify on failure
-        if: failure()
-        run: echo "Deployment failed. Notification sent."
+      - name: Create a file
+        uses: appleboy/ssh-action@master
+        with:
+          host: 35.154.253.216
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: echo hello world > hello.txt
