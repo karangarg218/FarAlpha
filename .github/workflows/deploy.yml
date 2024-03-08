@@ -29,7 +29,7 @@ jobs:
 
       - name: Deploy code to Azure VM
         run: |
-          scp -o StrictHostKeyChecking=no -i ssh_key.pem -r ./src/* "${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }}:~/src/"
+          scp -o StrictHostKeyChecking=no -i ssh_key.pem ./app.js "${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }}:~/src/"
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
