@@ -3,7 +3,7 @@ name: Deploy and Start App on Azure VM
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -21,16 +21,16 @@ jobs:
         with:
           host: ${{ secrets.AZURE_HOST }}
           username: ${{ secrets.AZURE_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }} 
-          port: 22  
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
-            
+
             scp -i ${{ secrets.SSH_PRIVATE_KEY }} -r ./src/* ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }}:~/src/
 
       - name: Install Node.js and pm2
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: "14"
 
       - name: Start Node.js application with pm2
         uses: appleboy/ssh-action@master
