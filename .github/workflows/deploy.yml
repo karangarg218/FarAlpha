@@ -22,7 +22,21 @@ jobs:
             git checkout master
             git pull origin master
             sudo apt-get update
-            sudo apt-get install -y nodejs npm
-            npm install pm2 -g
+
+            # Check if Node.js is installed
+            if ! command -v node &> /dev/null; then
+              sudo apt-get install -y nodejs
+            fi
+
+            # Check if npm is installed
+            if ! command -v npm &> /dev/null; then
+              sudo apt-get install -y npm
+            fi
+
+            # Check if PM2 is installed
+            if ! command -v pm2 &> /dev/null; then
+              npm install pm2 -g
+            fi
+
             npm install
             pm2 restart app.js
