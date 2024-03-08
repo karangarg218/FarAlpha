@@ -1,0 +1,51 @@
+name: Deploy and Start App on Azure VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install SSH client
+        run: sudo apt-get install -y openssh-client
+
+      - name: Deploy code to Azure VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AZURE_HOST }}
+          username: ${{ secrets.AZURE_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }} 
+          port: 22  
+          script: |
+            
+            scp -i ${{ secrets.SSH_PRIVATE_KEY }} -r ./src/* ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }}:~/src/
+
+      - name: Install Node.js and pm2
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Start Node.js application with pm2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AZURE_HOST }}
+          username: ${{ secrets.AZURE_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }} "cd ~/src && pm2 start app.js --name app"
+
+      - name: Notify on success
+        if: success()
+        run: echo "Deployment and startup of Node.js application on Azure VM successful. Notify stakeholders here."
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Deployment and startup of Node.js application on Azure VM failed. Notify stakeholders here."
