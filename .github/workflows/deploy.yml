@@ -22,4 +22,5 @@ jobs:
             git fetch origin
             git checkout master
             git pull origin master
+            npm install
             sudo env PATH=$PATH:/home/azureuser/.nvm/versions/node/v20.11.1/bin npx pm2 restart app.js
