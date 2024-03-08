@@ -14,7 +14,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Clear known hosts file
-        run: ssh-keygen -R ${{ secrets.AZURE_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          touch ~/.ssh/known_hosts
+          ssh-keygen -R ${{ secrets.AZURE_HOST }}
 
       - name: Install SSH client
         run: sudo apt-get install -y openssh-client
