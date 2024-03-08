@@ -22,11 +22,16 @@ jobs:
       - name: Install SSH client
         run: sudo apt-get install -y openssh-client
 
-      - name: Deploy code to Azure VM
+      - name: Set up SSH key
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key.pem
+          chmod 600 ssh_key.pem  # Set proper permissions
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy code to Azure VM
+        run: |
           scp -o StrictHostKeyChecking=no -i ssh_key.pem -r ./src/* ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }}:~/src/
-          rm ssh_key.pem
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
