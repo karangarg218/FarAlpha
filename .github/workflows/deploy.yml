@@ -24,4 +24,4 @@ jobs:
             git checkout master
             git pull origin master
             npm install
-            pm2 restart app.js
+            /usr/local/bin/pm2 restart app.js
