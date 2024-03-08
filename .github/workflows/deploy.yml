@@ -19,8 +19,8 @@ jobs:
           script: |
             cd /home/azureuser/finalApp
             git init
-            git remote add origin <repository-url>
-            git checkout -- *
+            git remote add origin https://github.com/karangarg218/FarAlpha.git
+            git fetch origin
             git checkout master
             git pull origin master
             npm install
