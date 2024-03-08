@@ -17,15 +17,12 @@ jobs:
         run: sudo apt-get install -y openssh-client
 
       - name: Deploy code to Azure VM
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AZURE_HOST }}
-          username: ${{ secrets.AZURE_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-
-            scp -i ${{ secrets.SSH_PRIVATE_KEY }} -r ./src/* ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }}:~/src/
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key.pem
+          scp -i ssh_key.pem -r ./src/* ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }}:~/src/
+          rm ssh_key.pem
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Install Node.js and pm2
         uses: actions/setup-node@v2
@@ -33,14 +30,10 @@ jobs:
           node-version: "20"
 
       - name: Start Node.js application with pm2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AZURE_HOST }}
-          username: ${{ secrets.AZURE_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }} "cd ~/src && pm2 start app.js --name app"
+        run: |
+          ssh -i ssh_key.pem ${{ secrets.AZURE_USERNAME }}@${{ secrets.AZURE_HOST }} "cd ~/src && pm2 start app.js --name app"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Notify on success
         if: success()
