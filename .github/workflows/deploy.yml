@@ -10,14 +10,16 @@ jobs:
     name: Deploy branch master
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout and restart the server
+      - name: Initialize Git repository and deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AZURE_HOST }}
           username: ${{ secrets.AZURE_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/azureuser/nodeapp
+            cd /home/azureuser/finalApp
+            git init
+            git remote add origin <repository-url>
             git checkout -- *
             git checkout master
             git pull origin master
