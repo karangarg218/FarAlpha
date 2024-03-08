@@ -8,6 +8,10 @@ router.get("/sayHello", function (req, res, next) {
   res.json("Hello User");
 });
 
+router.get("/", function (req, res, next) {
+  res.json("Please go to /sayHello");
+});
+
 app.use(router);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
