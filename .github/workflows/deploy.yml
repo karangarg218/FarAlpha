@@ -15,11 +15,14 @@ jobs:
         with:
           host: ${{ secrets.AZURE_HOST }}
           username: ${{ secrets.AZURE_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.AZURE_PRIVATE_KEY }}
           script: |
             cd /home/azureuser/nodeapp
             git checkout -- *
             git checkout master
             git pull origin master
+            sudo apt-get update
+            sudo apt-get install -y nodejs npm
+            npm install pm2 -g
             npm install
             pm2 restart app.js
