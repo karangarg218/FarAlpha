@@ -1,14 +1,25 @@
-name: Access server
-on: push
+name: Deploy on server
+
+on:
+  push:
+    branches:
+      - master
+
 jobs:
-  access_server:
-    name: Access server
+  deploy:
+    name: Deploy branch master
     runs-on: ubuntu-latest
     steps:
-      - name: Create a file
+      - name: Checkout and restart the server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.AZURE_HOST }}
-          username: ${{ secrets.AZURE_USERNAME }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: echo hello world > hello.txt
+          script: |
+            cd /home/azureuser/nodeapp
+            git checkout -- *
+            git checkout master
+            git pull origin master
+            npm install
+            pm2 restart app.js
